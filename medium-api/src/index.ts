@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { PrismaClient } from "./generated/prisma";
-import { decode, jwt, sign, verify } from "hono/jwt";
+import { sign } from "hono/jwt";
+import { PrismaClient } from "./generated/prisma/edge";
 
 const app = new Hono<{
   Bindings: {
