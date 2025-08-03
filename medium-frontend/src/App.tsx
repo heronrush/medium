@@ -1,5 +1,24 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
+import Blog from "./Blog";
+import Landing from "./pages/Landing";
+import Blogs from "./pages/Blogs";
+
 function App() {
-  return <div className="bg-red-50">hello wordl</div>;
+  return (
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/blog/:id" element={<Blog />} />
+          <Route path="/blogs" element={<Blogs />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
 export default App;
