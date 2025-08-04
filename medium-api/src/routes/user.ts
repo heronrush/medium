@@ -1,8 +1,9 @@
-import { Prisma, PrismaClient } from "@prisma/client/edge";
+import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { decode, jwt, sign, verify } from "hono/jwt";
+import { sign } from "hono/jwt";
 
 import { Hono } from "hono";
+import z from "zod";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -10,6 +11,19 @@ export const userRouter = new Hono<{
     JWT_SECRET: string;
   };
 }>();
+
+// signup zod schema
+const signupSchema = z.object({
+  fullname: z.string(),
+  email: z.string(),
+  password: z.string(),
+});
+
+// signup zod schema
+const signinSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+});
 
 // signup endpoint
 userRouter.post("/signup", async (c) => {
@@ -19,51 +33,64 @@ userRouter.post("/signup", async (c) => {
 
   const body = await c.req.json();
 
-  try {
-    const user = await prisma.users.create({
-      data: {
-        email: body.email,
-        password: body.password,
-      },
-    });
+  const response = signupSchema.safeParse(body);
 
-    const token = await sign({ userId: user.id }, c.env.JWT_SECRET);
+  if (response.success) {
+    try {
+      const user = await prisma.users.create({
+        data: {
+          fullname: body.fullname,
+          email: body.email,
+          password: body.password,
+        },
+      });
 
-    return c.json({ token: token, userId: user.id });
-  } catch (e) {
-    return c.json({ msg: e });
+      const token = await sign({ userId: user.id }, c.env.JWT_SECRET);
+
+      return c.json({ msg: "signup success", token: token, userId: user.id });
+    } catch (e) {
+      return c.json({ msg: e });
+    }
+  } else {
+    return c.json({ msg: "provide valid/correct credentials for signup" });
   }
 });
 
 // signin endpoint
 userRouter.post("/signin", async (c) => {
-  const body = await c.req.json();
-
   const prisma = new PrismaClient({
     datasourceUrl: c.env.CONNECTION_POOL_URL,
   }).$extends(withAccelerate());
 
-  try {
-    const user = await prisma.users.findFirst({
-      where: {
-        email: body.email,
-        password: body.password,
-      },
-    });
+  const body = await c.req.json();
 
-    if (!user) {
-      return c.json({ msg: "incorrect credentials /signin" });
+  const response = signinSchema.safeParse(body);
+
+  if (response.success) {
+    try {
+      const user = await prisma.users.findFirst({
+        where: {
+          email: body.email,
+          password: body.password,
+        },
+      });
+
+      if (!user) {
+        return c.json({ msg: "incorrect credentials /signin" });
+      }
+
+      const token = await sign(
+        {
+          userId: user.id,
+        },
+        c.env.JWT_SECRET
+      );
+
+      return c.json({ token: token, userId: user.id });
+    } catch (e) {
+      return c.text("error - signin");
     }
-
-    const token = await sign(
-      {
-        userId: user.id,
-      },
-      c.env.JWT_SECRET
-    );
-
-    return c.json({ token: token, userId: user.id });
-  } catch (e) {
-    return c.text("error - signin");
+  } else {
+    return c.json({ msg: "provide valid/correct signin data" });
   }
 });

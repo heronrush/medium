@@ -8,7 +8,8 @@
   // ],
   "vars": {
     "CONNECTION_POOL_URL": "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza19QU3JwOUdwWmJVVFBWRmRQaWt3THgiLCJhcGlfa2V5IjoiMDFLMUpDRTE2RjJIOFZCVE1TQjBQTjlEUEQiLCJ0ZW5hbnRfaWQiOiJiOTQzNjA3ZGQ1MGE5YmE5NmNmM2U0YmIzMGFiNTRjNmFhMzAyYjVkNDAxYTQ5YjEwMjBiOGRmZGJiMzgyYmQzIiwiaW50ZXJuYWxfc2VjcmV0IjoiZGViNTVmZDgtOGUzZC00MmYwLTk4OTAtMjI3YjIzY2UyOGRiIn0.XM6rmKdhx28JO6e0NFQGYyHQCFVY42PS0vwZSxA5L4I",
-    "JWT_SECRET": "SJOW892JA98239j898F898"
+    "JWT_SECRET": "SJOW892JA98239j898F898",
+    "CACHE_CONTROL": "no-store"
   }
   // "kv_namespaces": [
   //   {
@@ -16,6 +17,7 @@
   //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   //   }
   // ],
+
   // "r2_buckets": [
   //   {
   //     "binding": "MY_BUCKET",
