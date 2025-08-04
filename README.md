@@ -1,1 +1,1 @@
-# MEDIUM - A blogging application
+# MEDIUM - A simple, minimal blogging application
