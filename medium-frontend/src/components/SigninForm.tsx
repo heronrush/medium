@@ -14,21 +14,10 @@ export default function SigninForm() {
 
   // collects all the data from the form inputs and sends them to the backend for signup
   async function sendLoginRequest() {
-    const response = await axios.post(
-      `${BACKEND_URL}/api/v1/user/signin`,
-      {
-        email: email,
-        password: password,
-      },
-      {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-          Pragma: "no-cache",
-          Expires: "0",
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, {
+      email: email,
+      password: password,
+    });
 
     if (response.data) {
       localStorage.setItem("token", response.data.token);

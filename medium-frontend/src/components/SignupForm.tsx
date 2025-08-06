@@ -15,22 +15,11 @@ export default function SignupForm() {
 
   // collects all the data from the form inputs and sends them to the backend for signup
   async function sendSignupRequest() {
-    const response = await axios.post(
-      `${BACKEND_URL}/api/v1/user/signup`,
-      {
-        fullname: fullname,
-        email: email,
-        password: password,
-      },
-      {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-          Pragma: "no-cache",
-          Expires: "0",
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
+      fullname: fullname,
+      email: email,
+      password: password,
+    });
 
     if (response) {
       alert("success");
