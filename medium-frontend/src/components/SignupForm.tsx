@@ -44,52 +44,53 @@ export default function SignupForm() {
   }
 
   return (
-    <div className=" h-screen flex flex-col justify-center  items-center">
+    <div>
       <Medium />
+      <div className=" h-screen flex flex-col justify-center  items-center">
+        <h1 className="text-4xl font-bold">Create an account</h1>
 
-      <h1 className="text-4xl font-bold">Create an account</h1>
+        <p className="text-gray-500 mt-3">
+          Already have an account?{" "}
+          <span className="underline">
+            <Link to={"/signin"}>Login</Link>
+          </span>
+        </p>
 
-      <p className="text-gray-500 mt-3">
-        Already have an account?{" "}
-        <span className="underline">
-          <Link to={"/signin"}>Login</Link>
-        </span>
-      </p>
+        <div className="mt-10 mr-6 w-[370px]">
+          <form action="">
+            {/* full name */}
+            <LabelInput
+              label="Full name"
+              type="text"
+              placeholder="John Doe"
+              onChange={(e) => {
+                setFullname(e.target.value);
+              }}
+            />
+            <LabelInput
+              label="Email"
+              type="email"
+              placeholder="johndoe@gmail.com"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
+            <LabelInput
+              label="Password"
+              type="password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
 
-      <div className="mt-10 mr-6 w-[370px]">
-        <form action="">
-          {/* full name */}
-          <LabelInput
-            label="Full name"
-            type="text"
-            placeholder="John Doe"
-            onChange={(e) => {
-              setFullname(e.target.value);
-            }}
-          />
-          <LabelInput
-            label="Email"
-            type="email"
-            placeholder="johndoe@gmail.com"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-          <LabelInput
-            label="Password"
-            type="password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-
-          <button
-            className="mt-5 w-full text-2xl cursor-pointer py-2 hover:bg-neutral-700 rounded-md text-white bg-neutral-800"
-            onClick={sendSignupRequest}
-          >
-            Signup
-          </button>
-        </form>
+            <button
+              className="mt-5 w-full text-2xl cursor-pointer py-2 hover:bg-neutral-700 rounded-md text-white bg-neutral-800"
+              onClick={sendSignupRequest}
+            >
+              Signup
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
