@@ -57,7 +57,13 @@ export default function SignupForm() {
         </p>
 
         <div className="mt-10 mr-6 w-[370px]">
-          <form action="">
+          <form
+            action=""
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendSignupRequest();
+            }}
+          >
             {/* full name */}
             <LabelInput
               label="Full name"
@@ -84,8 +90,8 @@ export default function SignupForm() {
             />
 
             <button
+              type="submit"
               className="mt-5 w-full text-2xl cursor-pointer py-2 hover:bg-neutral-700 rounded-md text-white bg-neutral-800"
-              onClick={sendSignupRequest}
             >
               Signup
             </button>

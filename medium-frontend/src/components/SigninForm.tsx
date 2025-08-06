@@ -53,7 +53,12 @@ export default function SigninForm() {
         </p>
 
         <div className="mt-10 mr-6 w-[370px]">
-          <form action="">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendLoginRequest();
+            }}
+          >
             <LabelInput
               label="Email"
               type="email"
@@ -71,8 +76,8 @@ export default function SigninForm() {
             />
 
             <button
+              type="submit"
               className="mt-5 w-full text-2xl cursor-pointer py-2 hover:bg-neutral-700 rounded-md text-white bg-neutral-800"
-              onClick={sendLoginRequest}
             >
               Login
             </button>
