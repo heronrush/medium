@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
+import z from "zod";
 
 export const blogRouter = new Hono<{
   Bindings: {
@@ -13,7 +14,13 @@ export const blogRouter = new Hono<{
   };
 }>();
 
-// middleware
+const blogPublishSchema = z.object({
+  title: z.string(),
+  content: z.string(),
+});
+
+// middleware - checks on every /api/v1/blog route
+// and gets the jwt token and checks if it's valid or not
 blogRouter.use("/*", async (c, next) => {
   const token = c.req.header("Authorization") || "";
 
@@ -24,10 +31,10 @@ blogRouter.use("/*", async (c, next) => {
     c.set("userId", userId);
 
     await next();
-    return c.json({ msg: "token is not verified" });
   } catch (e) {
+    c.status(401);
     return c.json({
-      msg: "error in middleware - problem in token verification",
+      msg: "unauthorized",
     });
   }
 });
@@ -41,23 +48,28 @@ blogRouter.post("/publish", async (c) => {
 
   const userId = await c.get("userId");
 
-  try {
-    const blog = await prisma.blog.create({
-      data: {
-        title: body.title,
-        content: body.content,
-        authorId: userId,
-      },
-    });
+  const response = blogPublishSchema.safeParse({ body });
 
-    if (blog) {
+  if (response.success) {
+    try {
+      const blog = await prisma.blog.create({
+        data: {
+          title: body.title,
+          content: body.content,
+          authorId: userId,
+        },
+      });
+
       return c.json({ msg: "blog successfully created" });
+    } catch (e) {
+      return c.json({ msg: "error while creating blog post" });
     }
-  } catch (e) {
-    return c.json({ msg: "error while creating blog post" });
+  } else {
+    c.status(401);
+    return c.json({
+      msg: "invalid data format provided while publishing a blog",
+    });
   }
-
-  return c.text("Hello Hono!");
 });
 
 // changing a blog post content
@@ -81,6 +93,25 @@ blogRouter.get("/bulk", async (c) => {
 });
 
 // getting a blog post by its id
-blogRouter.get("/:id", (c) => {
-  return c.text("Hello Hono!");
+blogRouter.get("/:id", async (c) => {
+  const id = c.req.param("id");
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.CONNECTION_POOL_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    const specificBlog = await prisma.blog.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (specificBlog) {
+      return c.json({ blog: specificBlog });
+    }
+  } catch (e) {
+    c.status(401);
+    return c.json({ msg: "invalid request" });
+  }
 });

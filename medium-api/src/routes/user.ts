@@ -3,7 +3,7 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign } from "hono/jwt";
 
 import { Hono } from "hono";
-import z from "zod";
+import z, { email } from "zod";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -37,17 +37,28 @@ userRouter.post("/signup", async (c) => {
 
   if (response.success) {
     try {
-      const user = await prisma.users.create({
-        data: {
-          fullname: body.fullname,
+      const userExists = await prisma.users.findFirst({
+        where: {
           email: body.email,
-          password: body.password,
         },
       });
 
-      const token = await sign({ userId: user.id }, c.env.JWT_SECRET);
+      if (userExists) {
+        c.status(409);
+        return c.json({ msg: "user already exists" });
+      } else {
+        const user = await prisma.users.create({
+          data: {
+            fullname: body.fullname,
+            email: body.email,
+            password: body.password,
+          },
+        });
 
-      return c.json({ msg: "signup success", token: token, userId: user.id });
+        const token = await sign({ userId: user.id }, c.env.JWT_SECRET);
+
+        return c.json({ msg: "signup success", token: token, userId: user.id });
+      }
     } catch (e) {
       return c.json({ msg: e });
     }
@@ -76,7 +87,8 @@ userRouter.post("/signin", async (c) => {
       });
 
       if (!user) {
-        return c.json({ msg: "incorrect credentials /signin" });
+        c.status(401);
+        return c.json({ msg: "no user found" });
       }
 
       const token = await sign(
@@ -88,9 +100,11 @@ userRouter.post("/signin", async (c) => {
 
       return c.json({ token: token, userId: user.id });
     } catch (e) {
-      return c.text("error - signin");
+      c.status(401);
+      return c.json({ msg: "no user found" });
     }
   } else {
-    return c.json({ msg: "provide valid/correct signin data" });
+    c.status(401);
+    return c.json({ msg: "invalid credentials" });
   }
 });
