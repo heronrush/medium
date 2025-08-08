@@ -48,7 +48,7 @@ blogRouter.post("/publish", async (c) => {
 
   const userId = await c.get("userId");
 
-  const response = blogPublishSchema.safeParse({ body });
+  const response = blogPublishSchema.safeParse(body);
 
   if (response.success) {
     try {
@@ -62,6 +62,7 @@ blogRouter.post("/publish", async (c) => {
 
       return c.json({ msg: "blog successfully created" });
     } catch (e) {
+      c.status(500);
       return c.json({ msg: "error while creating blog post" });
     }
   } else {
