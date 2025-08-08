@@ -29,9 +29,12 @@ function Hero() {
           </p>
         </div>
 
-        <button className="border text-2xl px-5 py-2 rounded-md bg-neutral-800 text-white hover:bg-neutral-600 cursor-pointer">
-          Start writing
-        </button>
+        {/* cta button */}
+        <Link to="/signup">
+          <button className="border text-2xl px-5 py-2 transition duration-300 rounded-md bg-neutral-800 text-white hover:bg-neutral-600 cursor-pointer">
+            Start writing
+          </button>
+        </Link>
       </div>
     </div>
   );
@@ -44,10 +47,10 @@ function Topbar() {
         <Medium />
       </div>
       <div className="flex gap-15">
-        <button className="cursor-pointer text-[18px] hover:text-gray-400 font-semibold text-neutral-600">
+        <button className="cursor-pointer text-[18px] transition font-semibold hover:text-gray-500 text-neutral-900">
           <Link to={"/signin"}>Login</Link>
         </button>
-        <button className="cursor-pointer text-[18px] font-semibold hover:text-gray-400 text-neutral-600">
+        <button className="cursor-pointer text-[18px] transition font-semibold hover:text-gray-500 text-neutral-900">
           <Link to={"/signup"}>Signup</Link>
         </button>
       </div>
